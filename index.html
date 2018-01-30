@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>XML to JSON Conversion Utility</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <h1>XML to JSON Conversion Utility</h1>
+    <table>
+      <tr>
+        <td>
+          <button onclick="clearAll()">Clear All</button>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label>Original Text</label>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <textarea id="originaltext" cols="80" rows="4"></textarea>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <button id="showHideButton" onclick="showHideScript()">Show Script</button>
+          <textarea id="customScriptTextArea" cols="80" rows="4" style="display: none">
+function conversionLogic(originalText) {
+  var convertedText = "";
+  parser = new DOMParser();
+  xmlDoc = parser.parseFromString(originalText,"text/xml");
+            
+  //your logic begins below
+  var rowsArray = [];
+  for(i=0; i < xmlDoc.getElementsByTagName("Row").length; i++){
+    var row = xmlDoc.getElementsByTagName("Row")[i];
+    var rowObject = {};
+    rowObject.id = row.getElementsByTagName("Data")[0].childNodes[0].nodeValue;
+    rowObject.english = row.getElementsByTagName("Data")[1].childNodes[0].nodeValue;
+    rowObject.spanish = row.getElementsByTagName("Data")[2].childNodes[0].nodeValue;
+    rowObject.french = row.getElementsByTagName("Data")[3].childNodes[0].nodeValue;
+    rowObject.hindi = row.getElementsByTagName("Data")[4].childNodes[0].nodeValue;
+    rowsArray.push(rowObject);
+  }
+  convertedText = JSON.stringify(rowsArray);
+  //your logic ends above
+            
+  return convertedText;
+}
+          </textarea>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <button onclick="xmlToJsonConversion()">Convert</button>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label>Converted Text</label>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <textarea id="convertedtext" cols="80" rows="4"></textarea>
+        </td>
+      </tr>
+    </table>
+    <script>
+      document.getElementById('originaltext').value = "<Workbook><Worksheet><Table><Row><Cell><Data>d0003</Data></Cell><Cell><Data>yes</Data></Cell><Cell><Data>sí</Data></Cell><Cell><Data>oui</Data></Cell><Cell><Data>हाँ</Data></Cell></Row><Row><Cell><Data>d0004</Data></Cell><Cell><Data>no</Data></Cell><Cell><Data>No</Data></Cell><Cell><Data>non</Data></Cell><Cell><Data>नहीं</Data></Cell></Row></Table></Worksheet></Workbook>";
+      
+      function clearAll() {
+        document.getElementById('originaltext').value = "";
+        document.getElementById('convertedtext').value = "";
+      }
+      
+      function showHideScript() {
+        var showHideButton = document.getElementById("showHideButton");
+        var customScriptTextArea = document.getElementById("customScriptTextArea");
+        if(customScriptTextArea.style.display == "block") {
+          showHideButton.innerHTML = "Show Script";
+          customScriptTextArea.style.display = "none";
+        }
+        else {
+          showHideButton.innerHTML = "Hide Script";
+          customScriptTextArea.style.display = "block";
+        }
+      }
+      
+      function xmlToJsonConversion() {
+        
+        var customScript = document.getElementById("customScriptTextArea").value;
+        eval(customScript);
+        eval("var originalText = document.getElementById('originaltext').value; document.getElementById('convertedtext').value = conversionLogic(originalText);");
+      }
+    </script>
+  </body>
+</html>
